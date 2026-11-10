@@ -23,6 +23,7 @@ class_balance = dataset["Churn"].value_counts(normalize=True) * 100
 print(class_balance)
 print(dataset.describe())
 print(dataset.duplicated().sum())
+dataset = dataset.dropna(subset=["Churn"])
 print(dataset.isna().sum())
 
 x = dataset.drop(columns="Churn")
