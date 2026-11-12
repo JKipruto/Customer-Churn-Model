@@ -59,7 +59,7 @@ for col in numerical_col:
 
     plt.figure(figsize=(8, 8))
     plt.title(f"Boxplot for {col} to carry out its statistical Analysis")
-    sns.boxplot(y=col, data=x)
+    sns.boxplot(y=col, data=x_train)
     plt.xlabel(col)
     plt.show()
 
@@ -68,7 +68,9 @@ for col in numerical_col:
     sns.histplot(
         data=x_train,
         x=col,
-        bins=6
+        bins=10,
+        hue=y_train,
+        multiple="stack"
     )
     plt.xlabel(col)
     plt.ylabel("Density")
