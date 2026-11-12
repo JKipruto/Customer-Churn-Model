@@ -31,12 +31,20 @@ y = dataset["Churn"]
 
 numerical_col = ["Age", "Tenure", "Usage Frequency", "Support Calls",
                  "Payment Delay", "Total Spend", "Last Interaction"]  # I won't scale age
-# here I'll use labelenc for gender and the rest ordinal
+# here I'll use Onehotenc for gender and the rest ordinal
 ordinal_col = ["Subscription Type", "Contract Length"]
 gender_col = ["Gender"]
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, test_size=0.2, random_state=Random_state, stratify=y)
+
+plt.figure(figsize=(12, 12))
+plt.title("Count Plot for the Churn(target) ")
+sns.countplot(x=y_train)
+plt.xticks([0, 1], ["Stayed", "Churned"])
+plt.xlabel("The classes")
+plt.ylabel("Number of customers")
+plt.show()
 
 
 ordinal_pipe = Pipeline(
