@@ -49,15 +49,9 @@ plt.show()
 for col in numerical_col:
     print(f"Statistical Visualization of feature {col} in the training set")
     plt.figure(figsize=(8, 8))
-    plt.title(f"Scatterplot for {col} to visualize its spread")
-    sns.scatterplot(x=col, y=y_train, data=x_train)
-    plt.xlabel(f"{col}")
-    plt.show()
-
-    plt.figure(figsize=(8, 8))
     plt.title(f"Boxplot for {col} to carry out its statistical test")
     sns.boxplot(y=col, data=x)
-    plt.xlabel(f"{col}")
+    plt.xlabel(col)
     plt.show()
 
     plt.figure(figsize=(8, 8))
@@ -67,8 +61,27 @@ for col in numerical_col:
         x=col,
         kde=True,
     )
-    plt.xlabel(f"{col}")
+    plt.xlabel(col)
     plt.ylabel("Density")
+    plt.show()
+    cat_col = {
+        "Gender": ["Male", "Female"],
+        "Subscription Type": ["Basic", "Standard", "Premium"],
+        "Contract Length": ["Monthly", "Quarterly", "Annual"],
+    }
+
+for col, order in cat_col.items():
+    plt.figure(figsize=(6, 6))
+    plt.title(f"Count for {col}")
+    sns.countplot(x=col, data=x_train)
+    plt.xlabel(col)
+    plt.show()
+
+    plt.figure(figsize=(6, 4))
+    plt.title(f"Churn Rate by {col}")
+    sns.barplot(x=col, y=y_train, data=x, order=order)
+    plt.xlabel(col)
+    plt.ylabel("Churn rate")
     plt.show()
 
 
