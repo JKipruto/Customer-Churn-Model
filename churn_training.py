@@ -39,12 +39,37 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, test_size=0.2, random_state=Random_state, stratify=y)
 
 plt.figure(figsize=(12, 12))
-plt.title("Count Plot for the Churn(target) ")
+plt.title("Churn distribution (training set) ")
 sns.countplot(x=y_train)
 plt.xticks([0, 1], ["Stayed", "Churned"])
 plt.xlabel("The classes")
 plt.ylabel("Number of customers")
 plt.show()
+
+for col in numerical_col:
+    print(f"Statistical Visualization of feature {col} in the training set")
+    plt.figure(figsize=(8, 8))
+    plt.title(f"Scatterplot for {col} to visualize its spread")
+    sns.scatterplot(x=col, y=y_train, data=x_train)
+    plt.xlabel(f"{col}")
+    plt.show()
+
+    plt.figure(figsize=(8, 8))
+    plt.title(f"Boxplot for {col} to carry out its statistical test")
+    sns.boxplot(y=col, data=x)
+    plt.xlabel(f"{col}")
+    plt.show()
+
+    plt.figure(figsize=(8, 8))
+    plt.title(f"Histogram for {col}")
+    sns.histplot(
+        data=x_train,
+        x=col,
+        kde=True,
+    )
+    plt.xlabel(f"{col}")
+    plt.ylabel("Density")
+    plt.show()
 
 
 ordinal_pipe = Pipeline(
