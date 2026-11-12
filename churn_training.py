@@ -47,7 +47,16 @@ plt.ylabel("Number of customers")
 plt.show()
 
 for col in numerical_col:
-    print(f"Statistical Visualization of feature {col} in the training set")
+
+    plt.figure(figsize=(6, 6))
+    plt.title(f"Skewness of {col}")
+    sns.kdeplot(
+        data=x_train,
+        x=col
+    )
+    plt.xlabel(col)
+    plt.show()
+
     plt.figure(figsize=(8, 8))
     plt.title(f"Boxplot for {col} to carry out its statistical test")
     sns.boxplot(y=col, data=x)
@@ -60,6 +69,7 @@ for col in numerical_col:
         data=x_train,
         x=col,
         kde=True,
+        bins=6
     )
     plt.xlabel(col)
     plt.ylabel("Density")
@@ -79,7 +89,12 @@ for col, order in cat_col.items():
 
     plt.figure(figsize=(6, 4))
     plt.title(f"Churn Rate by {col}")
-    sns.barplot(x=col, y=y_train, data=x, order=order)
+    sns.barplot(
+        x=col,
+        y=y_train,
+        data=x,
+        order=order
+    )
     plt.xlabel(col)
     plt.ylabel("Churn rate")
     plt.show()
