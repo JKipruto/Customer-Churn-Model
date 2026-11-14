@@ -137,5 +137,7 @@ preprocessor = ColumnTransformer(
     ]
 )
 
-x_train = preprocessor.fit_transform(x_train)
-x_test = preprocessor.transform(x_test)
+def model_pipe(model):#I'll use this when training my models and performing CV
+    return Pipeline([("Preprocessor",preprocessor),("model",model)])
+
+
