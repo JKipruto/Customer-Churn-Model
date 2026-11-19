@@ -141,3 +141,4 @@ def model_pipe(model):#I'll use this when training my models and performing CV
     return Pipeline([("Preprocessor",preprocessor),("model",model)])
 
 
+
