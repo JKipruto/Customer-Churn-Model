@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import joblib
+import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
@@ -12,6 +13,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier, BaggingClassifier, AdaBoostClassifier
+from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, confusion_matrix
 
 Random_state = 42
@@ -137,8 +139,11 @@ preprocessor = ColumnTransformer(
     ]
 )
 
-def model_pipe(model):#I'll use this when training my models and performing CV
-    return Pipeline([("Preprocessor",preprocessor),("model",model)])
+
+def model_pipe(model):  # I'll use this when training my models and performing CV
+    return Pipeline([("Preprocessor", preprocessor), ("model", model)])
 
 
-
+c = np.logspace(-2, 2, 10)
+leaf_nodes = np.arange(10, 100, 5)
+max_depth = np.arange()
