@@ -50,15 +50,18 @@ plt.ylabel("Number of customers")
 plt.show()
 
 for col in numerical_col:
+    if col != "Support Calls":
+        plt.figure(figsize=(6, 6))
+        plt.title(f"Distribution of {col}")
+        sns.kdeplot(
+            data=x_train,
+            x=col
+        )
+        plt.xlabel(col)
+        plt.show()
 
-    plt.figure(figsize=(6, 6))
-    plt.title(f"Distribution of {col}")
-    sns.kdeplot(
-        data=x_train,
-        x=col
-    )
-    plt.xlabel(col)
-    plt.show()
+    else:
+        pass
 
     plt.figure(figsize=(8, 8))
     plt.title(f"Boxplot for {col} to carry out its statistical Analysis")
