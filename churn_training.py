@@ -5,7 +5,7 @@ import joblib
 import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV, cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 from sklearn.linear_model import LogisticRegression
@@ -15,7 +15,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier, BaggingClassifier, AdaBoostClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, confusion_matrix
-
 Random_state = 42
 dataset = pd.read_csv("customer_churn_dataset.csv")
 dataset = dataset.drop("CustomerID", axis=1)
@@ -171,4 +170,21 @@ tuning_search = {
     "rf": (RandomForestClassifier(random_state=Random_state), "random", {"model__max_leaf_nodes": leaf_nodes, "model__max_depth": max_depth, "model__n_estimators": n_estimators}, 20),
     "bag": (BaggingClassifier(random_state=Random_state), "random", {"model__n_estimators": n_estimators}, 15),
     "adaboost": (AdaBoostClassifier(random_state=Random_state), "random", {"model__n_estimators": n_estimators, "model__learning_rate": learning_rate}, 15)
+}
+
+baseline_voting_estimators = [
+    ("Destree", DecisionTreeClassifier(random_state=Random_state)),
+    ("knn", KNeighborsClassifier()),
+]
+
+
+baseline_models = {
+    "logreg": LogisticRegression(random_state=Random_state),
+    "Destree": DecisionTreeClassifier(random_state=Random_state),
+    "svc": SVC(random_state=Random_state),
+    "knn": KNeighborsClassifier(),
+    "voting": VotingClassifier(estimators=baseline_voting_estimators),
+    "rf": RandomForestClassifier(random_state=Random_state),
+    "bag": BaggingClassifier(random_state=Random_state),
+    "adaboost": AdaBoostClassifier(random_state=Random_state)
 }
