@@ -77,11 +77,11 @@ for col in numerical_col:
     plt.xlabel(col)
     plt.ylabel("Density")
     plt.show()
-    cat_col = {
-        "Gender": ["Male", "Female"],
-        "Subscription Type": ["Basic", "Standard", "Premium"],
-        "Contract Length": ["Monthly", "Quarterly", "Annual"],
-    }
+cat_col = {
+    "Gender": ["Male", "Female"],
+    "Subscription Type": ["Basic", "Standard", "Premium"],
+    "Contract Length": ["Monthly", "Quarterly", "Annual"],
+}
 
 for col, order in cat_col.items():
     plt.figure(figsize=(6, 6))
@@ -95,7 +95,7 @@ for col, order in cat_col.items():
     sns.barplot(
         x=col,
         y=y_train,
-        data=x,
+        data=x_train,
         order=order
     )
     plt.xlabel(col)
@@ -145,9 +145,8 @@ def model_pipe(model):  # I'll use this when training my models and performing C
 
 
 c = np.logspace(-2, 2, 10)
-max_iter = np.arange(1000, 10000, 50)
 leaf_nodes = np.arange(10, 100, 5)
-max_depth = np.arange(50, 1000, 10)
+max_depth = np.arange(3, 30)
 kernels = ["poly", "rbf", "linear"]
 gamma = ["auto", "scale"]
 n_neighbors = np.arange(5, 10, 1)
@@ -157,14 +156,14 @@ voting_types = ["hard", "soft"]
 n_estimators = np.arange(50, 100, 10)
 learning_rate = np.logspace(-1, 1, 8)
 
-voting_estimators = [DecisionTreeClassifier(
-    max_depth=100, max_leaf_nodes=10, random_state=Random_state), KNeighborsClassifier(n_neighbors=5, weights="distance", p=2)]
+voting_estimators = [("Destree", DecisionTreeClassifier(
+    max_depth=100, max_leaf_nodes=10, random_state=Random_state)), ("knn", KNeighborsClassifier(n_neighbors=5, weights="distance", p=2))]
 
 tuning_search = {
-    "logreg": (LogisticRegression(random_state=Random_state), "grid", {"model__C": c, "model__max_iter": max_iter}, None),
+    "logreg": (LogisticRegression(random_state=Random_state), "grid", {"model__C": c}, None),
     "Destree": (DecisionTreeClassifier(random_state=Random_state), "grid", {"model__max_leaf_nodes": leaf_nodes, "model__max_depth": max_depth}, None),
     "svc": (SVC(random_state=Random_state), "grid", {"model__kernel": kernels, "model__gamma": gamma, "model__C": c}, None),
-    "voting": (VotingClassifier(estimators=voting_estimators), "grid", voting_types),
+    "voting": (VotingClassifier(estimators=voting_estimators), "grid", {"model__voting": voting_types}),
     "knn": (KNeighborsClassifier(), "grid", {"model__n_neighbors": n_neighbors, "model__weights": weight, "model__p": p, }, None),
     "rf": (RandomForestClassifier(random_state=Random_state), "random", {"model__max_leaf_nodes": leaf_nodes, "model__max_depth": max_depth, "model__n_estimators": n_estimators}, 50),
     "bag": (BaggingClassifier(random_state=Random_state), "random", {"model__n_estimators": n_estimators}, 50),
