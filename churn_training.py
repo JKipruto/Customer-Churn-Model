@@ -26,6 +26,7 @@ print(class_balance)
 print(dataset.describe())
 print(dataset.duplicated().sum())
 dataset = dataset.dropna(subset=["Churn"])
+dataset["Churn"] = dataset["Churn"].astype(int)
 print(dataset.isna().sum())
 
 x = dataset.drop(columns="Churn")
@@ -51,7 +52,7 @@ plt.show()
 for col in numerical_col:
 
     plt.figure(figsize=(6, 6))
-    plt.title(f"Skewness of {col}")
+    plt.title(f"Distribution of {col}")
     sns.kdeplot(
         data=x_train,
         x=col
@@ -75,7 +76,7 @@ for col in numerical_col:
         multiple="stack"
     )
     plt.xlabel(col)
-    plt.ylabel("Density")
+    plt.ylabel("Count")
     plt.show()
 cat_col = {
     "Gender": ["Male", "Female"],
@@ -144,10 +145,9 @@ def model_pipe(model):  # I'll use this when training my models and performing C
     return Pipeline([("Preprocessor", preprocessor), ("model", model)])
 
 
-c = np.logspace(-2, 2, 10)
 leaf_nodes = np.arange(10, 100, 5)
 max_depth = np.arange(3, 30)
-kernels = ["poly", "rbf", "linear"]
+kernels = ["rbf", "linear", "sigmoid"]
 gamma = ["auto", "scale"]
 n_neighbors = np.arange(5, 10, 1)
 weight = ["distance", "uniform"]
@@ -160,12 +160,12 @@ voting_estimators = [("Destree", DecisionTreeClassifier(
     max_depth=100, max_leaf_nodes=10, random_state=Random_state)), ("knn", KNeighborsClassifier(n_neighbors=5, weights="distance", p=2))]
 
 tuning_search = {
-    "logreg": (LogisticRegression(random_state=Random_state), "grid", {"model__C": c}, None),
+    "logreg": (LogisticRegression(random_state=Random_state), "grid", {"model__C": np.logspace(-2, 2, 10)}, None),
     "Destree": (DecisionTreeClassifier(random_state=Random_state), "grid", {"model__max_leaf_nodes": leaf_nodes, "model__max_depth": max_depth}, None),
-    "svc": (SVC(random_state=Random_state), "grid", {"model__kernel": kernels, "model__gamma": gamma, "model__C": c}, None),
-    "voting": (VotingClassifier(estimators=voting_estimators), "grid", {"model__voting": voting_types}),
+    "svc": (SVC(random_state=Random_state), "grid", {"model__kernel": kernels, "model__gamma": gamma, "model__C": [0.1, 1, 10]}, None),
+    "voting": (VotingClassifier(estimators=voting_estimators), "grid", {"model__voting": voting_types}, None),
     "knn": (KNeighborsClassifier(), "grid", {"model__n_neighbors": n_neighbors, "model__weights": weight, "model__p": p, }, None),
-    "rf": (RandomForestClassifier(random_state=Random_state), "random", {"model__max_leaf_nodes": leaf_nodes, "model__max_depth": max_depth, "model__n_estimators": n_estimators}, 50),
-    "bag": (BaggingClassifier(random_state=Random_state), "random", {"model__n_estimators": n_estimators}, 50),
-    "adaboost": (AdaBoostClassifier(random_state=Random_state), "random", {"model__n_estimators": n_estimators, "model__learning_rate": learning_rate}, 50)
+    "rf": (RandomForestClassifier(random_state=Random_state), "random", {"model__max_leaf_nodes": leaf_nodes, "model__max_depth": max_depth, "model__n_estimators": n_estimators}, 20),
+    "bag": (BaggingClassifier(random_state=Random_state), "random", {"model__n_estimators": n_estimators}, 15),
+    "adaboost": (AdaBoostClassifier(random_state=Random_state), "random", {"model__n_estimators": n_estimators, "model__learning_rate": learning_rate}, 15)
 }
