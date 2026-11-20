@@ -5,7 +5,7 @@ import joblib
 import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV, cross_val_score
+from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 from sklearn.linear_model import LogisticRegression
@@ -15,6 +15,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier, BaggingClassifier, AdaBoostClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, confusion_matrix
+
 Random_state = 42
 dataset = pd.read_csv("customer_churn_dataset.csv")
 dataset = dataset.drop("CustomerID", axis=1)
@@ -188,3 +189,35 @@ baseline_models = {
     "bag": BaggingClassifier(random_state=Random_state),
     "adaboost": AdaBoostClassifier(random_state=Random_state)
 }
+
+x_tune, _, y_tune, _ = train_test_split(
+    x_train, y_train, train_size=0.11, stratify=y_train, random_state=Random_state)
+
+scorings = ["accuracy", "precision", "recall", "f1"]
+values_list = []
+
+for name, model in baseline_models.items():
+    print(f"Running {name}...")
+    cv_val = cross_validate(
+        model_pipe(model),
+        x_tune,
+        y_tune,
+        cv=3,
+        scoring=scorings,
+        n_jobs=-1
+    )
+    values_list.append(
+        {
+            "model": name,
+            "accuracy": cv_val["test_accuracy"].mean(),
+            "precision": cv_val["test_precision"].mean(),
+            "recall": cv_val["test_recall"].mean(),
+            "f1": cv_val["test_f1"].mean(),
+            "f1_std": cv_val["test_f1"].std(),
+            "fit_time_s": cv_val["fit_time"].mean()
+        }
+    )
+
+baseline_df = pd.DataFrame(values_list).set_index(
+    "model").sort_values("f1", ascending=False)
+print(baseline_df.round(4))
