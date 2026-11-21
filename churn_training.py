@@ -2,10 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import joblib
+import mlflow
 import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV, cross_validate
+from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV, cross_validate, StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 from sklearn.linear_model import LogisticRegression
@@ -187,7 +188,7 @@ baseline_models = {
     "voting": VotingClassifier(estimators=baseline_voting_estimators),
     "rf": RandomForestClassifier(random_state=Random_state),
     "bag": BaggingClassifier(random_state=Random_state),
-    "adaboost": AdaBoostClassifier(random_state=Random_state)
+    "adaboost": AdaBoostClassifier(random_state=Random_state),
 }
 
 x_tune, _, y_tune, _ = train_test_split(
@@ -208,7 +209,7 @@ for name, model in baseline_models.items():
     )
     values_list.append(
         {
-            "model": name,
+            "model ": name,
             "accuracy": cv_val["test_accuracy"].mean(),
             "precision": cv_val["test_precision"].mean(),
             "recall": cv_val["test_recall"].mean(),
@@ -221,3 +222,49 @@ for name, model in baseline_models.items():
 baseline_df = pd.DataFrame(values_list).set_index(
     "model").sort_values("f1", ascending=False)
 print(baseline_df.round(4))
+models_tune = ["Destree", "rf", "voting", "svc", "adaboost", "bag"]
+
+cv = StratifiedKFold(
+    n_splits=3,
+    shuffle=True,
+    random_state=Random_state
+)
+
+search_cv_est = {}
+tuned_vals = {}
+best_score = {}
+for name, (model, kind, params, iter) in tuning_search.items():
+    if name in models_tune:
+        print(f"Running cross validation test for {name}")
+        model = model_pipe(model)
+        if kind == "grid":
+            search_cv = GridSearchCV(
+                estimator=model,
+                param_grid=params,
+                scoring="accuracy",
+                cv=cv,
+                n_jobs=2,
+                verbose=2
+            )
+
+        else:
+            search_cv = RandomizedSearchCV(
+                estimator=model,
+                param_distributions=params,
+                n_iter=iter,
+                scoring="accuracy",
+                cv=cv,
+                n_jobs=2,
+                verbose=3,
+                random_state=Random_state
+            )
+        search_cv.fit(x_tune, y_tune)
+        search_cv_est[name] = search_cv.best_estimator_
+        tuned_vals[name] = search_cv.best_params_
+        best_score[name] = search_cv.best_score_
+
+    else:
+        pass
+
+metrics = []
+cm = {}
