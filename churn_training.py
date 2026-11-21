@@ -266,5 +266,21 @@ for name, (model, kind, params, iter) in tuning_search.items():
     else:
         pass
 
+est_df = pd.DataFrame(search_cv_est)
+print(est_df)
+
 metrics = []
 cm = {}
+
+for name, model in search_cv_est.items():
+    pred = model.predict(x_test)
+    metrics.append(
+        {
+            "Accuracy": accuracy_score(y_test, pred),
+            "Precision": precision_score(y_test, pred),
+            "recall": recall_score(y_test, pred)
+        }
+    )
+    print(f"Classification report for {name}")
+    print(classification_report(y_test, pred))
+    cm[name] = confusion_matrix(y_test, pred)
