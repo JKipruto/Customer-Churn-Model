@@ -266,13 +266,11 @@ for name, (model, kind, params, iter) in tuning_search.items():
     else:
         pass
 
-est_df = pd.DataFrame(search_cv_est)
-print(est_df)
-
 metrics = []
 cm = {}
 
 for name, model in search_cv_est.items():
+
     pred = model.predict(x_test)
     metrics.append(
         {
@@ -284,3 +282,23 @@ for name, model in search_cv_est.items():
     print(f"Classification report for {name}")
     print(classification_report(y_test, pred))
     cm[name] = confusion_matrix(y_test, pred)
+
+for name, matrix in cm.items():
+
+    plt.figure(figsize=(6, 6))
+    plt.title(f"Confusion Matrix for {name}")
+    sns.heatmap(
+        matrix,
+        annot=True,
+        cmap="Blues",
+        fmt="d",
+        xticklabels=["Stayed", "Churned"],
+        yticklabels=["Stayed", "Churned"]
+    )
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.show()
+
+
+est_df = pd.DataFrame(search_cv_est)
+print(est_df)
