@@ -252,7 +252,7 @@ for name, (model, kind, params, iter) in tuning_search.items():
                 estimator=model,
                 param_distributions=params,
                 n_iter=iter,
-                scoring="accuracy",
+                scoring="f1",
                 cv=cv,
                 n_jobs=2,
                 verbose=3,
