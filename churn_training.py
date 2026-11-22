@@ -201,8 +201,8 @@ for name, model in baseline_models.items():
     print(f"Running {name}...")
     cv_val = cross_validate(
         model_pipe(model),
-        x_train,
-        y_train,  # Switch to check if the model will perform better with larger number
+        x_tune,
+        y_tune,  # Switch to check if the model will perform better with larger number
         cv=3,
         scoring=scorings,
         n_jobs=-1
@@ -241,7 +241,7 @@ for name, (model, kind, params, iter) in tuning_search.items():
             search_cv = GridSearchCV(
                 estimator=model,
                 param_grid=params,
-                scoring="accuracy",
+                scoring="f1",
                 cv=cv,
                 n_jobs=2,
                 verbose=2
