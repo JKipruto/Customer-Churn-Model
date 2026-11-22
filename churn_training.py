@@ -201,15 +201,15 @@ for name, model in baseline_models.items():
     print(f"Running {name}...")
     cv_val = cross_validate(
         model_pipe(model),
-        x_tune,
-        y_tune,
+        x_train,
+        y_train,  # Switch to check if the model will perform better with larger number
         cv=3,
         scoring=scorings,
         n_jobs=-1
     )
     values_list.append(
         {
-            "model ": name,
+            "model": name,
             "accuracy": cv_val["test_accuracy"].mean(),
             "precision": cv_val["test_precision"].mean(),
             "recall": cv_val["test_recall"].mean(),
@@ -222,7 +222,7 @@ for name, model in baseline_models.items():
 baseline_df = pd.DataFrame(values_list).set_index(
     "model").sort_values("f1", ascending=False)
 print(baseline_df.round(4))
-models_tune = ["Destree", "rf", "voting", "svc", "adaboost", "bag"]
+models_tune = ["Destree", "rf", "voting", "bag"]  # ",svc", "adaboost", ]
 
 cv = StratifiedKFold(
     n_splits=3,
@@ -298,7 +298,3 @@ for name, matrix in cm.items():
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.show()
-
-
-est_df = pd.DataFrame(search_cv_est)
-print(est_df)
