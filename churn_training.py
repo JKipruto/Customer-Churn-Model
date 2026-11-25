@@ -298,3 +298,10 @@ for name, matrix in cm.items():
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.show()
+
+for name, score in best_score.items():
+    print(F"{name},{model},{score}")
+
+decision_tree = search_cv_est["Destree"]
+destree_params = tuned_vals["Destree"]
+print(decision_tree)
