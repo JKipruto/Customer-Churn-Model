@@ -14,7 +14,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier, BaggingClassifier, AdaBoostClassifier
-from xgboost import XGBClassifier
+# from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, classification_report, confusion_matrix
 
 Random_state = 42
