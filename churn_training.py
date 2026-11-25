@@ -149,8 +149,8 @@ def model_pipe(model):  # I'll use this when training my models and performing C
     return Pipeline([("Preprocessor", preprocessor), ("model", model)])
 
 
-leaf_nodes = np.arange(10, 100, 5)
-max_depth = np.arange(3, 30)
+leaf_nodes = np.arange(40, 75, 5)
+max_depth = np.arange(5, 15)
 kernels = ["rbf", "linear", "sigmoid"]
 gamma = ["auto", "scale"]
 n_neighbors = np.arange(5, 10, 1)
@@ -222,7 +222,7 @@ for name, model in baseline_models.items():
 baseline_df = pd.DataFrame(values_list).set_index(
     "model").sort_values("f1", ascending=False)
 print(baseline_df.round(4))
-models_tune = ["Destree", "rf", "voting", "bag"]  # ",svc", "adaboost", ]
+models_tune = ["Destree"]  # , "rf","voting",  "bag"]  # ",svc", "adaboost", ]
 
 cv = StratifiedKFold(
     n_splits=3,
@@ -299,9 +299,11 @@ for name, matrix in cm.items():
     plt.ylabel("Actual")
     plt.show()
 
-for name, score in best_score.items():
-    print(F"{name},{model},{score}")
+decision_tree_pipeline = search_cv_est["Destree"]
 
-decision_tree = search_cv_est["Destree"]
-destree_params = tuned_vals["Destree"]
-print(decision_tree)
+final_pred = decision_tree_pipeline.predict(x_test)
+print(classification_report(y_test, final_pred))
+
+decision_tree_pipeline.fit(x, y)
+
+joblib.dump(decision_tree_pipeline, "Final_model.pkl")
